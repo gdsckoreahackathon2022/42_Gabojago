@@ -1,15 +1,17 @@
-const response = require("../../response");
-const { User, Favorites, Categories, Tiers, Product } = require('../../models');
+const response = require("../response");
+var express = require("express");
+var router = express.Router();
+const { User, Favorites, Categories, Tiers, Product } = require('../models');
 
 //get('/user/:id/favorites')
-const lookup = async (req, res, next) => {
+router.get("/:id/favorites", async (req, res, next) => {
   var id = req.params.id;
   const favorites = await Favorites.findAll({
     include: [{
       model: Product,
-      required : true, // inner join
+      required: true, // inner join
     }],
-    where:{user_id : id}
+    where: { user_id: id }
   }).catch((err) => {
     console.error(err);
     return next(err);
@@ -18,10 +20,10 @@ const lookup = async (req, res, next) => {
     return response(res, 400, 'cannot find favorites');
   }
   return res.json(favorites);
-}
+});
 
 //post('/user/:id/favorites')
-const enroll = async (req, res, next) => {
+router.post("/:id/favorites", async (req, res, next) => {
   var id = req.params.id;
   const favorite = await Favorites.create({
     user_id: id,
@@ -32,10 +34,10 @@ const enroll = async (req, res, next) => {
   });
 
   return response(res, 201, favorite);
-}
+});
 
 //delete('/user/:id/favorites')
-const unenroll = async (req, res, next) => {
+router.delete("/:id/favorites", async (req, res, next) => {
   const id = req.params.id;
 
   const result = Favorites.destroy({
@@ -47,10 +49,10 @@ const unenroll = async (req, res, next) => {
 
   if (!result) return response(res, 400, 'cannot find id');
   return response(res, 200);
-}
+});
 
 //get(/user/{id}/favorites/groups)
-const list = async (req, res, next) => {
+router.get("/:id/favorites/groups", async (req, res, next) => {
   var id = req.params.id;
   const categories = await Categories.findAll({
     include: [{
@@ -59,8 +61,8 @@ const list = async (req, res, next) => {
       include: [{
         model: Favorites,
         required: true, // inner join
-        where : {user_id : id}
-      }],      
+        where: { user_id: id }
+      }],
     }],
   }).catch((err) => {
     console.error(err);
@@ -70,10 +72,10 @@ const list = async (req, res, next) => {
     return response(res, 400, 'cannot find categories');
   }
   return res.json(categories);
-}
+});
 
 //patch(/user/{id}/point)
-const point = async (req, res, next) => {
+router.patch("/:id/point", async (req, res, next) => {
   const result = await User.update({
     point: req.body.point,
   }, {
@@ -87,10 +89,10 @@ const point = async (req, res, next) => {
     return response(res, 400, 'point is not exist');
   }
   return response(res, 200, result);
-}
+});
 
 //patch(/user/{id}/tier)
-const tier = async (req, res, next) => {
+router.patch("/:id/point/tier", async (req, res, next) => {
   const result = await User.update({
     tier_id: req.body.tier_id,
   }, {
@@ -104,12 +106,5 @@ const tier = async (req, res, next) => {
     return response(res, 400, 'tier_id is not exist');
   }
   return response(res, 200, result);
-}
-module.exports = {
-  lookup,
-  enroll,
-  unenroll,
-  list,
-  point,
-  tier
-}
+});
+module.exports = router;
