@@ -8,16 +8,28 @@ GET http://localhost:8080/verify/ HTTP/1.1
 ###
 GET http://localhost:8080/users/ HTTP/1.1
 ###
-POST http://localhost:8080/users/ HTTP/1.1
+POST http://d522-1-231-133-115.ngrok.io/product/register HTTP/1.1
 Content-Type: application/json
 
 {
-    "loginId": "bb",
-    "pw": "bb",
-    "name": "dd",
-    "age": 23,
-    "married": true,
-    "isAdmin": true
+  "id": 0,
+  "category_id": 0,
+  "category_name": 0,
+  "name": 0,
+  "bacode": "string",
+  "hit": 0,
+  "info": {
+    "company": "string",
+    "mark": 
+      {
+        "name": "string",
+        "cert_id": 0,
+        "cert_state": true,
+        "cert_start_timestamp": "string",
+        "cert_end_timestamp": "string"
+      }
+    
+  }
 }
 ###
 GET http://localhost:8080/users/dd HTTP/1.1
